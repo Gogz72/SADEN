@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 import rospy
-from std_msgs.msg import Float32MultiArray
+from std_msgs.msg import Float32MultiArray , Float32
 
 # parameters
 kp_stabilize_roll = 4.5
@@ -21,26 +21,45 @@ kp_rate_yaw = 1
 kd_rate_yaw = 0.018
 ki_rate_yaw = 0.0
 
-kp_rate_roll = 10.0
-kd_rate_roll = 0
-ki_rate_roll = 0.6
+kp_rate_throttle = 10.0
+kd_rate_throttle = 0
+ki_rate_throttle = 0.6
+
+kp_throttle = 1.0
+ki_throttle = 0.3
+kd_throttle = 0.0
 
 def main():
     rospy.init_node("Tuning")
-    parameter_pub = rospy.Publisher("Params", Float32MultiArray, queue_size=10)
+
+    parameter_pub = rospy.Publisher('/Params', Float32MultiArray, queue_size=10)
+    setpoint_pub = rospy.Publisher('/Setpoint', Float32MultiArray, queue_size=10)
+
     rate = rospy.Rate(10)
 
-    while not rospy.is_shutdown():
-        parameters = [kp_stabilize_roll, kp_stabilize_pitch, kp_stabilize_yaw, kp_pos_xy, kp_rate_roll, kd_rate_roll,
-                      ki_rate_roll, kp_rate_pitch, kd_rate_pitch, ki_rate_pitch, kp_rate_yaw, kd_rate_yaw,
-                      ki_rate_yaw, kp_rate_roll, kd_rate_roll, ki_rate_roll]
+    parameters_msg = Float32MultiArray()
+    parameters_msg.data = [
+            kp_stabilize_roll, kp_stabilize_pitch, kp_stabilize_yaw, kp_pos_xy,
+            kp_rate_roll, kd_rate_roll, ki_rate_roll,
+            kp_rate_pitch, kd_rate_pitch, ki_rate_pitch,
+            kp_rate_yaw, kd_rate_yaw, ki_rate_yaw,
+            kp_rate_throttle, kd_rate_throttle, ki_rate_throttle,
+            kp_throttle, ki_throttle, kd_throttle
+        ]
 
-        # Create a Float32MultiArray message
-        array_msg = Float32MultiArray()
-        array_msg.data = parameters
+    setpoint = [0.0, 0.0, 2.0]
+
+    setpoint_msg = Float32MultiArray()
+    setpoint_msg.data = setpoint
+
+    while not rospy.is_shutdown():
+
 
         # Publish the message
-        parameter_pub.publish(array_msg)
+        parameter_pub.publish(parameters_msg)
+        setpoint_pub.publish(setpoint_msg)
+
         rate.sleep()
+
 if __name__ == '__main__':
     main()
