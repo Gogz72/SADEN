@@ -26,8 +26,8 @@ kd_rate_throttle = 0
 ki_rate_throttle = 0.6
 
 kp_throttle = 1.0
-ki_throttle = 0.3
 kd_throttle = 0.0
+ki_throttle = 0.08
 
 def main():
     rospy.init_node("Tuning")
@@ -44,7 +44,7 @@ def main():
             kp_rate_pitch, kd_rate_pitch, ki_rate_pitch,
             kp_rate_yaw, kd_rate_yaw, ki_rate_yaw,
             kp_rate_throttle, kd_rate_throttle, ki_rate_throttle,
-            kp_throttle, ki_throttle, kd_throttle
+            kp_throttle, kd_throttle, ki_throttle
         ]
 
     setpoint = [0.0, 0.0, 2.0]
