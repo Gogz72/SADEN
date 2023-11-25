@@ -9,21 +9,21 @@ kp_stabilize_pitch = 4.5
 kp_stabilize_yaw = 6.0
 kp_pos_xy = 0.1
 
-kp_rate_roll = 0.135
-kd_rate_roll = 0.135
-ki_rate_roll = 0.00360
+kp_rate_roll = 0.01
+kd_rate_roll = 0
+ki_rate_roll = 0
 
-kp_rate_pitch = 0.135
-kd_rate_pitch = 0.135
-ki_rate_pitch = 0.00360
+kp_rate_pitch = 0.01
+kd_rate_pitch = 0
+ki_rate_pitch = 0
 
-kp_rate_yaw = 1
-kd_rate_yaw = 0.018
-ki_rate_yaw = 0.0
+kp_rate_yaw = 0.01
+kd_rate_yaw = 0.0
+ki_rate_yaw = 0
 
-kp_rate_throttle = 10.0
+kp_rate_throttle = 0.1
 kd_rate_throttle = 0
-ki_rate_throttle = 0.6
+ki_rate_throttle = 0
 
 kp_throttle = 1.0
 kd_throttle = 0.0
@@ -47,7 +47,7 @@ def main():
             kp_throttle, kd_throttle, ki_throttle
         ]
 
-    setpoint = [0.0, 0.0, 2.0]
+    setpoint = [0.0, 0.0, 10.0, 0.0 ,0.0, 0.0]
 
     setpoint_msg = Float32MultiArray()
     setpoint_msg.data = setpoint
