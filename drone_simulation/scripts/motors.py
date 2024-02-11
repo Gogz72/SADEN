@@ -1,4 +1,6 @@
-#!/usr/bin/python3
+#!/usr/bin/env python3
+
+
 import numpy as np
 from geometry_msgs.msg import Quaternion
 import rospy
@@ -22,7 +24,7 @@ def control_commands_to_motor_speeds(commands):
 
 
 rospy.init_node('typr_to_motors', anonymous=True) 					#Initialize ROS node
-pub = rospy.Publisher('/Motor_Speeds', Quaternion, queue_size=10)
+pub = rospy.Publisher('/Motor_Speeds', Quaternion, queue_size=10)   # it could be sent by any multiarray not quternion deeh 3afana 3ady
 rate = rospy.Rate(10) 												# rate of publishing msg 10hz
 sub = rospy.Subscriber('/control_commands', Quaternion, control_commands_to_motor_speeds)
 

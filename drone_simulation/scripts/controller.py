@@ -1,4 +1,5 @@
-#!/usr/bin/python3
+#!/usr/bin/env python3
+
 import math
 from simple_pid import PID
 import numpy as np
@@ -75,12 +76,19 @@ def set_goal_pose(goal_msg): # Pose msg
         This is the callback of a ros subscriber,
         It receives the Goal Pose and store it in a global variable (goal_point)
     """
+    global z_gogz_output
     global goal_point
     #print(goal_msg)
     goal_msg=goal_msg.pose
     #print(goal_msg)
     x,y,z,w=goal_msg.orientation.x,goal_msg.orientation.y,goal_msg.orientation.z,goal_msg.orientation.w
     goal_point = Pose_class(goal_msg.position,Quaternion_class(x,y,z,w))
+
+    z_gogz_output = y
+    print("\n")
+    print("booooooom")
+    print (z_gogz_output)
+    print("\n")
     #goal_point.position.z=2
     #print("position: ",goal_point.get_position())
     #print("orientation quaternion: ",goal_point.orientation.quaternion())
@@ -94,8 +102,11 @@ def set_current_pose(current_msg): # Pose msg
         Then do one iteration in the control loop
     """
     global current_state
+    global  z_gogz
     current_msg=current_msg.pose
     x,y,z,w=current_msg.orientation.x,current_msg.orientation.y,current_msg.orientation.z,current_msg.orientation.w
+
+    z_gogz = z
     #print(current_msg)
     #print(x,y,z,w)
     current_state = Pose_class(current_msg.position,Quaternion_class(x,y,z,w))
@@ -107,7 +118,7 @@ def set_current_pose(current_msg): # Pose msg
 
 #PID Controllers initialization
 #throttle_pid = PID(0, 0, 0, setpoint=0)
-z_dot_pid = PID(100, 20, 0.0, setpoint=0)
+z_dot_pid = PID(1, 1, 0.0, setpoint=0)
 
 #y_pid = PID(0, 0, 0, setpoint=0)
 #x_pid = PID(0, 0, 0, setpoint=0)
@@ -133,6 +144,8 @@ yaw_prev=0
 time_prev=time.time()
 def control_loop():
     global current_state, goal_point, x_prev, y_prev, time_prev, yaw_prev, z_prev
+    global z_gogz_output, z_gogz
+
     time_now = time.time()
     dt = time_now - time_prev
 
@@ -239,17 +252,30 @@ def control_loop():
     #print("yaw_command = ",yaw_)
     
     print("Error:","(x,y,z):",delta,"(roll,pitch,yaw):",goal_point.orientation.euler_zyx()-current_state.orientation.euler_zyx())
+    print("\n")
+    print("booooooom")
+    print (z_gogz_output)
+    print("\n")
 
-    control_commands=Quaternion(pitch_,roll_,throttle_,yaw_)
-    print("Control Commands: ",control_commands)
-    pub.publish(control_commands)
+    if z_gogz_output > z_gogz:
+    
+        throttle_ = abs(throttle_)
+        control_commands=Quaternion(pitch_,roll_,throttle_,yaw_)
+        print("Control Commands: ",control_commands)
+        pub.publish(control_commands)
+    else:
+
+        control_commands=Quaternion(pitch_,roll_,throttle_,yaw_)
+        print("Control Commands: ",control_commands)
+        pub.publish(control_commands)
 
 #Initialize ros node, publisher and subscribers
 rospy.init_node('controller', anonymous=True)
 pub = rospy.Publisher('/control_commands', Quaternion, queue_size=10)
 rate = rospy.Rate(10)
 sub_current_pose = rospy.Subscriber('/Pos', PoseStamped, set_current_pose)
-sub_goal_pose = rospy.Subscriber('/Conrol_Pose', PoseStamped, set_goal_pose)
-
+sub_goal_pose = rospy.Subscriber('/Control_Pose', PoseStamped, set_goal_pose)
+z_gogz = 0.0
+z_gogz_output = 0.0
 while not rospy.is_shutdown():
     rate.sleep()

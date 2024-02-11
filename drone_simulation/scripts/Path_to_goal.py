@@ -54,7 +54,7 @@ if __name__ == '__main__':
 	rospy.init_node('Path_to_Goal', anonymous=True)
 	rospy.Subscriber('/path', Path, get_path)
 	point_pub = rospy.Publisher('/sim_ros_interface/map/state',Quaternion, queue_size=27000)
-	pub=rospy.Publisher('/Conrol_Pose', PoseStamped, queue_size=10)
+	pub=rospy.Publisher('/Control_Pose', PoseStamped, queue_size=10)
 	path = []  
 	current_pose = []
 	i=0
