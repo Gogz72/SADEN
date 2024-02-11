@@ -118,7 +118,7 @@ def set_current_pose(current_msg): # Pose msg
 
 #PID Controllers initialization
 #throttle_pid = PID(0, 0, 0, setpoint=0)
-z_dot_pid = PID(1, 1, 0.0, setpoint=0)
+z_dot_pid = PID(1, 0.1, 0.5, setpoint=0)
 
 #y_pid = PID(0, 0, 0, setpoint=0)
 #x_pid = PID(0, 0, 0, setpoint=0)
