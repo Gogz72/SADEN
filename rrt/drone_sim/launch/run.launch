@@ -1,0 +1,10 @@
+<launch>
+<!-- Launch the motors node -->
+<node name="motors" pkg="drone_sim" type="motors.py" output="screen" />
+<!-- Launch the Path_to_goal node -->
+<node name="path_to_goal" pkg="drone_sim" type="Path_to_goal.py" output="screen" />
+<!-- Launch the A_star node -->
+<!--node name="A_star" pkg="drone_sim" type="A_star.py" output="screen" -->
+<!-- Launch the controller node -->
+<!--node name="controller" pkg="drone_sim" type="controller.py" output="screen" --> 
+</launch>
