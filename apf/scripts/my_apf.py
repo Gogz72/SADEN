@@ -10,38 +10,21 @@ from scipy import interpolate
 import matplotlib.pyplot as plt
 
 def set_current_pose(data):
-	global current_point,current_posestamped,start_point2
-	current_posestamped=data
-	start_point2=[data.pose.position.x,data.pose.position.y,data.pose.position.z]
-	current_point=([data.pose.position.x,data.pose.position.y,data.pose.position.z])
+    global current_point, current_orientation
+
+    current_point = ([data.pose.position.x, data.pose.position.y, data.pose.position.z])
+
+    current_orientation = ([data.pose.orientation.x, data.pose.orientation.y, data.pose.orientation.z])
+   
+    
 
 
 def set_goal_pose(data):
-    global goal_point, goal_point2, goal_point_prev, goal_changed, counter, goal_posestamped
+    global goal_point, goal_orientation
 
-    goal_posestamped = data
-    goal_point2 = [data.pose.position.x, data.pose.position.y, data.pose.position.z]
     goal_point = np.array([data.pose.position.x, data.pose.position.y, data.pose.position.z])
-    
-    if not np.array_equal(goal_point, goal_point_prev):  # Compare arrays
-        goal_changed = True
-        counter = 0
-    else:
-        if counter >= 10 and goal_changed == True:
-            sub_goal_pose.unregister()
-        counter += 1
 
-    goal_point_prev = goal_point
-    
-    # Construct the PoseStamped message correctly
-    goal_msg = PoseStamped()
-    goal_msg.header.stamp = rospy.Time.now()
-    goal_msg.pose.position.x = goal_point[0]
-    goal_msg.pose.position.y = goal_point[1]
-    goal_msg.pose.position.z = goal_point[2]
-    control_pub.publish(goal_msg)
-
-
+    goal_orientation = np.array([data.pose.orientation.x, data.pose.orientation.y, data.pose.orientation.z])
 
 
 
@@ -99,7 +82,7 @@ class Dot:
 
             # Publish the PoseStamped message
             control_pub.publish(control_msg)
-
+            
             # Append the new position to the list of positions
             #self.positions.append(self.start.copy())
 
@@ -115,22 +98,23 @@ if __name__ == '__main__':
         sub_goal_pose = rospy.Subscriber('/Target_Pos', PoseStamped, set_goal_pose)
         control_pub = rospy.Publisher('/Control_Pose',PoseStamped, queue_size=10)
 
-        goal_point_prev= 0.0
-        
-        goal_point_prev = np.array([0.0, 0.0, 0.0])  # Initialize as numpy array
         current_point = np.array([0.0, 0.0, 0.0])  # Initialize as numpy array
-        start_point2 = np.array([0.0, 0.0, 0.0])  # Initialize as numpy array
-        goal_point = np.array([0.0, 0.0, 0.0])  # Initialize as numpy arry
-        goal_point2 = np.array([0.0, 0.0, 0.0])  
-
+        current_orientation = np.array([0.0, 0.0, 0.0])
+        goal_point = np.array([0.0, 0.0, 0.0])  # Initialize as numpy array
+        goal_orientation = np.array ([0.0, 0.0, 0.0])
 
         obstacles = np.array([[1, 2, 1], [4, 1, 1]])  # Convert to numpy array for easier calculations
         rep_radii = [1, 1.5]  # Radius for each obstacle
 
+        #rate = rospy.rate(60)
+
        # my_dot = Dot(current_point, goal_point, obstacles, rep_radii)
         
         while not rospy.is_shutdown():
+            
             my_dot = Dot(current_point, goal_point, obstacles, rep_radii)
             my_dot.move()
+
+            #rate.sleep
 
         #my_dot.plot_movement()

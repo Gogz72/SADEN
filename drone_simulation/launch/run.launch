@@ -4,7 +4,7 @@
 <!-- Launch the Path_to_goal node -->
 <!--node name="path_to_goal" pkg="drone_simulation" type="Path_to_goal.py" output="screen" /> -->
 <!-- Launch the A_star node -->
-<!--node name="A_star" pkg="drone_simulation" type="A_star.py" output="screen" /> -->
+<node name="apf" pkg="apf" type="my_apf.py" output="screen" /> 
 <!-- Launch the controller node -->
 <!-- <node name="controller" pkg="drone_sim" type="controller.py" output="screen" /> -->
 </launch>
