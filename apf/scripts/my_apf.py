@@ -1,20 +1,15 @@
 #!/usr/bin/env python3
 import numpy as np
-import math
 import rospy
-from geometry_msgs.msg import Quaternion, PoseStamped, Pose, Point
-from nav_msgs.msg import Path
-from std_msgs.msg import Bool
+from geometry_msgs.msg import Quaternion, PoseStamped, Pose
 from tf.transformations import euler_from_quaternion, quaternion_from_euler
-from scipy import interpolate
-import matplotlib.pyplot as plt
 
 def set_current_pose(data):
     global current_point, current_orientation
 
-    current_point = ([data.pose.position.x, data.pose.position.y, data.pose.position.z])
+    current_point = np.array([data.pose.position.x, data.pose.position.y, data.pose.position.z])
 
-    current_orientation = ([data.pose.orientation.x, data.pose.orientation.y, data.pose.orientation.z])
+    current_orientation = np.array([data.pose.orientation.x, data.pose.orientation.y, data.pose.orientation.z, data.pose.orientation.w])
    
     
 
@@ -24,14 +19,14 @@ def set_goal_pose(data):
 
     goal_point = np.array([data.pose.position.x, data.pose.position.y, data.pose.position.z])
 
-    goal_orientation = np.array([data.pose.orientation.x, data.pose.orientation.y, data.pose.orientation.z])
-
+    goal_orientation = np.array([data.pose.orientation.x, data.pose.orientation.y, data.pose.orientation.z, data.pose.orientation.w])
 
 
 class Dot:
-    def __init__(self, start, goal, obstacles, rep_radii, k_att=0.5, k_rep=1, max_iter=1000, threshold=0.1):
+    def __init__(self, start, goal, gorientation, obstacles, rep_radii, k_att=0.5, k_rep=1, max_iter=1000, threshold=0.1):
         self.start = np.array(start)
         self.goal = np.array(goal)
+        self.gorientation = np.array(gorientation)
         self.obstacles = np.array(obstacles)
         self.rep_radii = rep_radii
         self.k_att = k_att
@@ -61,6 +56,7 @@ class Dot:
         dz = (self.total_potential(position + np.array([0, 0, delta])) - self.total_potential(position - np.array([0, 0, delta]))) / (2 * delta)
         return np.array([dx, dy, dz])
 
+
     def move(self):
         step_size = 0.1
         max_iter = self.max_iter
@@ -71,50 +67,38 @@ class Dot:
 
             # Update position based on gradient descent
             self.start -= step_size * gradient
-            
-                    # Create a PoseStamped message
+
+            # Create a PoseStamped message
             control_msg = PoseStamped()
             control_msg.header.stamp = rospy.Time.now()
             control_msg.pose.position.x = self.start[0]
             control_msg.pose.position.y = self.start[1]
             control_msg.pose.position.z = 1.0  # Assuming z-coordinate is 0 for control point
-            control_msg.pose.orientation = Quaternion()  # Set orientation to identity
+            control_msg.pose.orientation = Quaternion(*quaternion_from_euler(self.gorientation[0], self.gorientation[1], self.gorientation[2]))
 
             # Publish the PoseStamped message
             control_pub.publish(control_msg)
-            
+
+                
             # Append the new position to the list of positions
-            #self.positions.append(self.start.copy())
+            # self.positions.append(self.start.copy())
 
-
-
-
- 
 if __name__ == '__main__':
+    rospy.init_node("apf")
 
-        rospy.init_node("apf")
+    sub_current_pose = rospy.Subscriber('/Pos', PoseStamped, set_current_pose)
+    sub_goal_pose = rospy.Subscriber('/Target_Pos', PoseStamped, set_goal_pose)
+    control_pub = rospy.Publisher('/Control_Pose',PoseStamped, queue_size=10)
 
-        sub_current_pose = rospy.Subscriber('/Pos', PoseStamped, set_current_pose)
-        sub_goal_pose = rospy.Subscriber('/Target_Pos', PoseStamped, set_goal_pose)
-        control_pub = rospy.Publisher('/Control_Pose',PoseStamped, queue_size=10)
+    current_point = np.array([0.0, 0.0, 0.0])  # Initialize as numpy array
+    current_orientation = np.array([0.0, 0.0, 0.0, 0.0])
+    goal_point = np.array([0.0, 0.0, 0.0])  # Initialize as numpy array
+    goal_orientation = np.array([0.0, 0.0, 0.0, 0.0])
 
-        current_point = np.array([0.0, 0.0, 0.0])  # Initialize as numpy array
-        current_orientation = np.array([0.0, 0.0, 0.0])
-        goal_point = np.array([0.0, 0.0, 0.0])  # Initialize as numpy array
-        goal_orientation = np.array ([0.0, 0.0, 0.0])
+    obstacles = np.array([[1, 2, 1], [4, 1, 1]])  # Convert to numpy array for easier calculations
+    rep_radii = [1, 1.5]  # Radius for each obstacle
 
-        obstacles = np.array([[1, 2, 1], [4, 1, 1]])  # Convert to numpy array for easier calculations
-        rep_radii = [1, 1.5]  # Radius for each obstacle
+    while not rospy.is_shutdown():
+        my_dot = Dot(current_point, goal_point, goal_orientation, obstacles, rep_radii)
+        my_dot.move()
 
-        #rate = rospy.rate(60)
-
-       # my_dot = Dot(current_point, goal_point, obstacles, rep_radii)
-        
-        while not rospy.is_shutdown():
-            
-            my_dot = Dot(current_point, goal_point, obstacles, rep_radii)
-            my_dot.move()
-
-            #rate.sleep
-
-        #my_dot.plot_movement()

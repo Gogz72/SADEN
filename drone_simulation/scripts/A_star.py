@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/python3
 import numpy as np
 import math
 import rospy
@@ -343,7 +343,7 @@ if __name__ == '__main__':     # Main function that is executed
 	sub_current_pose = rospy.Subscriber('/Pos', PoseStamped, set_current_pose)
 	sub_goal_pose = rospy.Subscriber('/Target_Pos', PoseStamped, set_goal_pose)
 	pub = rospy.Publisher('/sim_ros_interface/map/state',Quaternion, queue_size=27000)
-	control_pub = rospy.Publisher('/Conrol_Pose',PoseStamped, queue_size=10)
+	control_pub = rospy.Publisher('/Control_Pose',PoseStamped, queue_size=10)
 	reset_pub=rospy.Publisher('/sim_ros_interface/map/reset',Bool,queue_size=10)
 	path_pub=rospy.Publisher('/path',Path,queue_size=10)
 	rate = rospy.Rate(0.5) 
