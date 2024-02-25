@@ -70,18 +70,23 @@ if __name__ == '__main__':
 
     step_size_time = 10.0
 
-    time.sleep(step_size_time)
+    #time.sleep(step_size_time)
 
 
     while not rospy.is_shutdown():
+     
+        start_time = time.time()
+        while time.time() - start_time < 20:
+            # Your code here
+            set_point(-2.0,-2.0,1.0,np.pi/1000,np.pi/1000,np.pi/2)
+
+        start2_time = time.time()
+        while time.time() - start2_time < 20:
+            # Your code here
+            set_point(0.0, 0.0, 1.0, np.pi/1000, np.pi/1000, (179/180) * np.pi)   
     
-     set_point(0.0,0.0,1.0,0.0,0.0,0.0)   
 
-     time.sleep(step_size_time)
 
-     set_point(-2.0,-2.0,1.0,0.0,0.0,0.0)   
-
-     time.sleep(step_size_time)
 
 
 

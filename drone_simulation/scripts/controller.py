@@ -84,11 +84,6 @@ def set_goal_pose(goal_msg): # Pose msg
     x,y,z,w=goal_msg.orientation.x,goal_msg.orientation.y,goal_msg.orientation.z,goal_msg.orientation.w
     goal_point = Pose_class(goal_msg.position,Quaternion_class(x,y,z,w))
 
-    z_gogz_output = y
-    print("\n")
-    print("booooooom")
-    print (z_gogz_output)
-    print("\n")
     #goal_point.position.z=2
     #print("position: ",goal_point.get_position())
     #print("orientation quaternion: ",goal_point.orientation.quaternion())
@@ -132,8 +127,8 @@ y_dot_pid.output_limits = (-0.5, 0.5)       #maximum drone roll angle
 
 #yaw_pid = PID(0, 0, 0, setpoint=0)
 #yaw_pid.output_limits = (-0.05, 0.05)       #maximum drone yaw rate
-yaw_dot_pid = PID(2, 0, 0, setpoint=0)
-yaw_dot_pid.output_limits = (-0.5, 0.5)       #maximum drone yaw rate
+yaw_dot_pid = PID(1, 0.01, 0.02, setpoint=0)      # (2,0,0)
+yaw_dot_pid.output_limits = (-0.5, 0.5)       #maximum drone yaw rate (-0.5, 0.2)
 roll_pid = PID(0.1, 0.001, 0.05, setpoint=0)
 pitch_pid = PID(0.1, 0.001, 0.05, setpoint=0)
 

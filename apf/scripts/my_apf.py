@@ -10,6 +10,7 @@ def set_current_pose(data):
     current_point = np.array([data.pose.position.x, data.pose.position.y, data.pose.position.z])
 
     current_orientation = np.array([data.pose.orientation.x, data.pose.orientation.y, data.pose.orientation.z, data.pose.orientation.w])
+    
    
     
 
@@ -20,6 +21,8 @@ def set_goal_pose(data):
     goal_point = np.array([data.pose.position.x, data.pose.position.y, data.pose.position.z])
 
     goal_orientation = np.array([data.pose.orientation.x, data.pose.orientation.y, data.pose.orientation.z, data.pose.orientation.w])
+
+    goal_orientation = euler_from_quaternion(goal_orientation)
 
 
 class Dot:
@@ -73,7 +76,10 @@ class Dot:
             control_msg.header.stamp = rospy.Time.now()
             control_msg.pose.position.x = self.start[0]
             control_msg.pose.position.y = self.start[1]
-            control_msg.pose.position.z = 1.0  # Assuming z-coordinate is 0 for control point
+            control_msg.pose.position.z = self.start[2]
+
+
+            
             control_msg.pose.orientation = Quaternion(*quaternion_from_euler(self.gorientation[0], self.gorientation[1], self.gorientation[2]))
 
             # Publish the PoseStamped message
@@ -95,7 +101,7 @@ if __name__ == '__main__':
     goal_point = np.array([0.0, 0.0, 0.0])  # Initialize as numpy array
     goal_orientation = np.array([0.0, 0.0, 0.0, 0.0])
 
-    obstacles = np.array([[1, 2, 1], [4, 1, 1]])  # Convert to numpy array for easier calculations
+    obstacles = np.array([[100, 2, 1], [100, 1, 1]])  # Convert to numpy array for easier calculations
     rep_radii = [1, 1.5]  # Radius for each obstacle
 
     while not rospy.is_shutdown():
