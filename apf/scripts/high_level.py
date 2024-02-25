@@ -8,6 +8,7 @@ from nav_msgs.msg import Path
 from std_msgs.msg import Bool
 from tf.transformations import euler_from_quaternion, quaternion_from_euler
 import time
+import random
 
 def set_current_pose(data):
     global current_point, current_orientation
@@ -26,6 +27,11 @@ def set_goal_pose(data):
 def pi_2_pi(angle):
     #A function to wrap the angle between -pi and pi (for numerical stability)
     return (angle + np.pi) % (2 * np.pi) - np.pi
+
+def trig (x,y,x_c,y_c):
+    pythegorous = np.sqrt((x_c - x)**2 + (y_c - y)**2)
+    angle = np.arcsin((y_c - y)/pythegorous)
+    return angle
 
 
 def clock_wise (angle):
@@ -66,6 +72,11 @@ if __name__ == '__main__':
     goal_point = np.array([0.0, 0.0, 0.0])  # Initialize as numpy array
     goal_orientation = np.array([0.0, 0.0, 0.0, 0.0])
 
+    x = 0.0
+    y = 0.0
+    z = 1.0
+
+
     step_size = 1.0
 
     step_size_time = 10.0
@@ -74,16 +85,22 @@ if __name__ == '__main__':
 
 
     while not rospy.is_shutdown():
-     
-        start_time = time.time()
-        while time.time() - start_time < 20:
-            # Your code here
-            set_point(-2.0,-2.0,1.0,np.pi/1000,np.pi/1000,np.pi/2)
 
+        x = float(random.randint(-5, 5)) 
+        y = float(random.randint(-5, 5))
+        start_time = time.time()
+
+        while time.time() - start_time < 10:
+            # Your code here
+            z_th = trig(x,y,current_point[0],current_point[1])
+
+            set_point(current_point[0],current_point[1],z,np.pi/1000,np.pi/1000,z_th)
+            
         start2_time = time.time()
         while time.time() - start2_time < 20:
             # Your code here
-            set_point(0.0, 0.0, 1.0, np.pi/1000, np.pi/1000, (179/180) * np.pi)   
+            
+            set_point(x, y, z, np.pi/1000, np.pi/1000, z_th)   
     
 
 
