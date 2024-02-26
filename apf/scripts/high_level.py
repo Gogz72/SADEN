@@ -31,7 +31,7 @@ def pi_2_pi(angle):
 def trig (x,y,x_c,y_c):
     pythegorous = np.sqrt((x_c - x)**2 + (y_c - y)**2)
     angle = np.arcsin((y_c - y)/pythegorous)
-    return angle
+    return -angle
 
 
 def clock_wise (angle):
@@ -75,6 +75,8 @@ if __name__ == '__main__':
     x = 0.0
     y = 0.0
     z = 1.0
+    x_c = 0.0
+    y_c = 0.0
 
 
     step_size = 1.0
@@ -88,19 +90,24 @@ if __name__ == '__main__':
 
         x = float(random.randint(-5, 5)) 
         y = float(random.randint(-5, 5))
+
+        z_th = trig(x,y,x_c,y_c)
+        
         start_time = time.time()
 
         while time.time() - start_time < 10:
             # Your code here
-            z_th = trig(x,y,current_point[0],current_point[1])
 
-            set_point(current_point[0],current_point[1],z,np.pi/1000,np.pi/1000,z_th)
+            set_point(x_c,y_c,z,np.pi/1000,np.pi/1000,z_th)
             
         start2_time = time.time()
         while time.time() - start2_time < 20:
             # Your code here
             
             set_point(x, y, z, np.pi/1000, np.pi/1000, z_th)   
+
+        x_c = x
+        y_c = y
     
 
 
