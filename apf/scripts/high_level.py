@@ -29,9 +29,11 @@ def pi_2_pi(angle):
     return (angle + np.pi) % (2 * np.pi) - np.pi
 
 def trig (x,y,x_c,y_c):
-    pythegorous = np.sqrt((x_c - x)**2 + (y_c - y)**2)
-    angle = np.arcsin((y_c - y)/pythegorous)
-    return -angle
+    angle_rad = math.atan2(y - y_c, x - x_c)
+    #angle_deg = math.degrees(angle_rad)
+    if angle_rad < 0:
+        angle_rad += np.pi*2
+    return angle_rad
 
 
 def clock_wise (angle):

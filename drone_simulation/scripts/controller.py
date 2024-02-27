@@ -1,4 +1,4 @@
-#!/usr/bin/python3
+#!/usr/bin/env python3
 import math
 from simple_pid import PID
 import numpy as np
@@ -107,7 +107,7 @@ def set_current_pose(current_msg): # Pose msg
 
 #PID Controllers initialization
 #throttle_pid = PID(0, 0, 0, setpoint=0)
-z_dot_pid = PID(100, 20, 0.0, setpoint=0)
+z_dot_pid = PID(80, 20, 0.5, setpoint=0)
 
 #y_pid = PID(0, 0, 0, setpoint=0)
 #x_pid = PID(0, 0, 0, setpoint=0)
