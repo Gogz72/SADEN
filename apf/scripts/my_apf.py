@@ -23,7 +23,7 @@ def set_goal_pose(data):
 
 
 class Dot:
-    def __init__(self, start, goal, gorientation, obstacles, k_att = 1, k_rep=450, rep_radius = 1.5, max_iter=1000, threshold=0.1):
+    def __init__(self, start, goal, gorientation, obstacles, k_att = 1, k_rep=100, rep_radius = 1, max_iter=10, threshold=0.1):
         self.start = np.array(start)
         self.goal = np.array(goal)
         self.gorientation = np.array(gorientation)

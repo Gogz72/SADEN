@@ -120,6 +120,10 @@ if __name__ == '__main__':
             # Your code here
 
             set_point(x_c,y_c,z,np.pi/1000,np.pi/1000,z_th)
+
+            if rospy.is_shutdown():
+             break  # Exit the loop if rospy is shutdown
+
             
         start2_time = time.time()
         while time.time() - start2_time < 20:
@@ -127,6 +131,9 @@ if __name__ == '__main__':
             #obstacle_coords.pose.position.x, obstacle_coords.pose.position.y = obstacle_coordinates(current_point[0],current_point[1],z_th,obstacle_length)
             #obstacle_pub.publish()
             set_point(x, y, z, np.pi/1000, np.pi/1000, z_th)   
+            
+            if rospy.is_shutdown():
+             break
 
         x_c = x
         y_c = y
